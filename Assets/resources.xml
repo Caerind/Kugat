@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<Resources resourceCount="5" typeCount="9">
+	<Resource identifier="MainFont" filename="Fonts/Tahoma.ttf" type="0" />
+	<Resource identifier="cursor" filename="Textures/cursor.png" type="1" />
+	<Resource identifier="background" filename="Textures/background.png" type="1" />
+	<Resource identifier="background_screen" filename="Textures/background_screen.png" type="1" />
+	<Resource identifier="menu_soundtrack" filename="Musics/menu_soundtrack.ogg" type="6" />
+	<Resource identifier="type" filename="Sounds/type.wav" type="7" />
+</Resources>
