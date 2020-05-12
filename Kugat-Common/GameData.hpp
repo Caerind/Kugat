@@ -91,13 +91,13 @@ struct GameData
 	static en::U32 sCardWhoID;
 	static en::U32 sCardWhereID;
 	static en::U32 sCardWhatID;
-	static bool sCanPlay[static_cast<en::U32>(ReactionData::Type::Count)]; // TODO
+	static en::U32 sCanPlay[static_cast<en::U32>(ReactionData::Type::Count)]; // TODO
 	static std::vector<CardDelay> sRecentCardPile;
 	static std::vector<ReactionDelay> sRecentReactionPile;
 
 	static void InitGame(en::U32 playerCount);
 	static bool React(ReactionData::Type reaction);
-	static bool IsReactionAvailable(ReactionData::Type reaction);
+	static en::U32 IsReactionAvailable(ReactionData::Type reaction);
 
 private:
 	static en::U32 GetRandomCard(CardData::Type cardType);

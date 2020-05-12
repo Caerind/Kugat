@@ -3,6 +3,8 @@
 #include <Enlivengine/System/Assert.hpp>
 #include <Enlivengine/Math/Random.hpp>
 
+#include <iostream>
+
 bool GameData::sLoaded;
 en::U32 GameData::sLoadedVersion;
 std::vector<CardData> GameData::sCards;
@@ -21,7 +23,7 @@ en::Time GameData::sAccumulatedTime;
 en::U32 GameData::sCardWhoID;
 en::U32 GameData::sCardWhereID;
 en::U32 GameData::sCardWhatID;
-bool GameData::sCanPlay[static_cast<en::U32>(ReactionData::Type::Count)];
+en::U32 GameData::sCanPlay[static_cast<en::U32>(ReactionData::Type::Count)];
 std::vector<GameData::CardDelay> GameData::sRecentCardPile;
 std::vector<GameData::ReactionDelay> GameData::sRecentReactionPile;
 
@@ -82,6 +84,8 @@ bool GameData::LoadFromFile(const std::string& filename)
 				xml.getValue(cardData.text);
 				en::trim(cardData.text);
 
+				std::cout << cardData.text << std::endl;
+
 				sCards.push_back(cardData);
 			}
 			else if (nodeName == "Reaction")
@@ -113,6 +117,8 @@ bool GameData::LoadFromFile(const std::string& filename)
 
 void GameData::InitGame(en::U32 playerCount)
 {
+	sReactions[static_cast<en::U32>(ReactionData::Type::Volunteer)].nb = playerCount;
+
 	sNumberOfPlayers = playerCount;
 
 	sCurrentTurn = 0;
@@ -141,6 +147,7 @@ bool GameData::React(ReactionData::Type reaction)
 				|| sCards[i].id == sCardWhereID
 				|| sCards[i].id == sCardWhatID)
 			{
+				LogInfo(en::LogChannel::Map, 5, " -> %s : %d", sCards[i].text.c_str(), sCards[i].bonus);
 				bonusTotal += sCards[i].bonus;
 			}
 		}
@@ -149,16 +156,17 @@ bool GameData::React(ReactionData::Type reaction)
 		{
 			if (sReactions[i].type == reaction)
 			{
+				LogInfo(en::LogChannel::Map, 5, " -> Reaction %d : %d", static_cast<en::U32>(sReactions[i].type), sReactions[i].bonus);
 				bonusTotal += sReactions[i].bonus;
 			}
 		}
 
-		en::I32 dice = en::Random::get<en::I32>(1, 6);
-		dice += bonusTotal;
-		if (dice > sFailedThreshold)
+		const en::I32 dice = en::Random::get<en::I32>(1, 6);
+		const en::I32 diceTotal = dice + bonusTotal;
+		if (diceTotal > static_cast<en::I32>(sFailedThreshold))
 		{
 			// Failed
-			LogInfo(en::LogChannel::Map, 9, "Dice : %d, Bonus : %d ==> Failed", dice, bonusTotal);
+			LogInfo(en::LogChannel::Map, 9, "Dice:%d, Bonus:%d, Total:%d ==> Failed", dice, bonusTotal, diceTotal);
 			sFailed++;
 			if (sFailed >= sFailedMax)
 			{
@@ -168,7 +176,7 @@ bool GameData::React(ReactionData::Type reaction)
 		else
 		{
 			// Success
-			LogInfo(en::LogChannel::Map, 9, "Dice : %d, Bonus : %d ==> Success", dice, bonusTotal);
+			LogInfo(en::LogChannel::Map, 9, "Dice:%d, Bonus:%d, Total:%d ==> Success", dice, bonusTotal, diceTotal);
 		}
 
 		// Delay reuse of reaction
@@ -238,6 +246,13 @@ bool GameData::React(ReactionData::Type reaction)
 
 	// Pick new cards
 	sCardWhoID = GetRandomCard(CardData::Type::Who);
+	if (IsReactionAvailable(ReactionData::Type::Volunteer) == 0)
+	{
+		while ((sCards[sCardWhoID].tag & static_cast<en::U64>(CardData::Tag::Benevole)) != 0)
+		{
+			sCardWhoID = GetRandomCard(CardData::Type::Who);
+		}
+	}
 	sCardWhereID = GetRandomCard(CardData::Type::Where);
 	sCardWhatID = GetRandomCard(CardData::Type::What);
 
@@ -250,11 +265,11 @@ bool GameData::React(ReactionData::Type reaction)
 	return true; // Keep playing
 }
 
-bool GameData::IsReactionAvailable(ReactionData::Type reaction)
+en::U32 GameData::IsReactionAvailable(ReactionData::Type reaction)
 {
 	if (reaction == ReactionData::Type::Nothing)
 	{
-		return true;
+		return 1;
 	}
 	en::U32 foundCount = 0;
 	const en::U32 recentReactionCount = static_cast<en::U32>(sRecentReactionPile.size());
@@ -265,7 +280,7 @@ bool GameData::IsReactionAvailable(ReactionData::Type reaction)
 			foundCount++;
 		}
 	}
-	return foundCount < sReactions[static_cast<en::U32>(reaction)].nb;
+	return sReactions[static_cast<en::U32>(reaction)].nb - foundCount;
 }
 
 en::U32 GameData::GetRandomCard(CardData::Type cardType)

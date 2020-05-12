@@ -4,21 +4,19 @@
 #include <Common.hpp>
 
 #include <Enlivengine/System/Log.hpp>
-#include <Enlivengine/Math/Random.hpp> // Random for ClientID
 
 class ClientSocket
 {
 public:
 	ClientSocket()
 		: mSocket()
-		, mServerAddress(DefaultServerAddress)
-		, mServerPort(DefaultServerPort)
+		, mServerAddress()
+		, mServerPort()
 		, mRunning(false)
-		, mClientID(en::U32_Max)
 	{
 	}
 
-	bool Start()
+	bool Start(const sf::IpAddress& address, en::U16 port)
 	{
 		LogInfo(en::LogChannel::All, 5, "Starting...%s", "");
 		mSocket.setBlocking(true);
@@ -28,6 +26,8 @@ public:
 			return false;
 		}
 		mSocket.setBlocking(false);
+		mServerAddress = address;
+		mServerPort = port;
 		mRunning = true;
 		LogInfo(en::LogChannel::All, 5, "Started on port %d", mSocket.getLocalPort());
 		return true;
@@ -55,7 +55,7 @@ public:
 		static en::U16 remotePort;
 		while (mSocket.receive(packet, remoteAddress, remotePort) == sf::Socket::Done)
 		{
-			// Someone that is not the server is sending us packet
+			// Someone that is not the server is sending us packet here
 			if (remotePort != mServerPort || remoteAddress != mServerAddress)
 			{
 				// Ignore them for now
@@ -73,14 +73,10 @@ public:
 	void SetServerPort(en::U16 serverPort) { mServerPort = serverPort; }
 
 	bool IsRunning() const { return mRunning; }
-	bool IsConnected() const { return IsRunning() && mClientID != en::U32_Max; }
-	en::U32 GetClientID() const { return mClientID; }
-	void SetClientID(en::U32 clientID) { mClientID = clientID; }
 
 private:
 	sf::UdpSocket mSocket;
 	sf::IpAddress mServerAddress;
 	en::U16 mServerPort;
 	bool mRunning;
-	en::U32 mClientID;
 };

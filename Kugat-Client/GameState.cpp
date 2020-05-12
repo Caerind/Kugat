@@ -4,100 +4,109 @@
 #include <Enlivengine/Application/ResourceManager.hpp>
 #include <Enlivengine/Application/Application.hpp>
 #include <Enlivengine/Graphics/SFMLResources.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
+#include <Enlivengine/System/DateTime.hpp>
 
 #include "GameSingleton.hpp"
 
 GameState::GameState(en::StateManager& manager)
 	: en::State(manager)
 {
+	mOnline = false;
+	mPlaying = false;
+	mPlayerIndex = en::U32_Max;
 	mBackground.setTexture(en::ResourceManager::GetInstance().Get<en::Texture>("background").Get());
 	mScreen.setTexture(en::ResourceManager::GetInstance().Get<en::Texture>("background_screen").Get());
+	mCardWhoString = "";
+	mCardWhatString = "";
+	mCardWhereString = "";
 
-	mTextCurrentTurn.setFont(en::ResourceManager::GetInstance().Get<en::Font>("MainFont").Get());
-	mTextCurrentTurn.setCharacterSize(20);
-	mTextCurrentTurn.setPosition(10.0f, 10.0f);
+	mTextCurrentTurn.setFont(en::ResourceManager::GetInstance().Get<en::Font>("DS-DIGI").Get());
+	mTextCurrentTurn.setCharacterSize(18);
+	mTextCurrentTurn.setPosition(51, 79);
+	mTextCurrentTurn.setColor(sf::Color::Black);
+	mTextTime.setFont(en::ResourceManager::GetInstance().Get<en::Font>("DS-DIGI").Get());
+	mTextTime.setCharacterSize(18);
+	mTextTime.setPosition(261, 79);
+	mTextTime.setColor(sf::Color::Black);
 
-	mTextCurrentPlayer.setFont(en::ResourceManager::GetInstance().Get<en::Font>("MainFont").Get());
-	mTextCurrentPlayer.setCharacterSize(20);
-	mTextCurrentPlayer.setPosition(10.0f, 40.0f);
+	mTextCardWho.setFont(en::ResourceManager::GetInstance().Get<en::Font>("DS-DIGIB").Get());
+	mTextCardWho.setCharacterSize(18);
+	mTextCardWho.setPosition(360.0f * 0.5f, 124.0f);
+	mTextCardWho.setFillColor(sf::Color::Black);
+	mTextCardWhat.setFont(en::ResourceManager::GetInstance().Get<en::Font>("DS-DIGIB").Get());
+	mTextCardWhat.setCharacterSize(18);
+	mTextCardWhat.setPosition(360.0f * 0.5f, 146.0f);
+	mTextCardWhat.setFillColor(sf::Color::Black);
+	mTextCardWhere.setFont(en::ResourceManager::GetInstance().Get<en::Font>("DS-DIGIB").Get());
+	mTextCardWhere.setCharacterSize(18);
+	mTextCardWhere.setPosition(360.0f * 0.5f, 168.0f);
+	mTextCardWhere.setFillColor(sf::Color::Black);
 
-	mTextAccumulatedTime.setFont(en::ResourceManager::GetInstance().Get<en::Font>("MainFont").Get());
-	mTextAccumulatedTime.setCharacterSize(20);
-	mTextAccumulatedTime.setPosition(10.0f, 70.0f);
+	mClockSprite.setTexture(en::ResourceManager::GetInstance().Get<en::Texture>("clock").Get());
+	mClockSprite.setPosition({ 38.0f, 53.0f });
+	mClockInitialRect = mClockSprite.getTextureRect();
 
-	mTextFailed.setFont(en::ResourceManager::GetInstance().Get<en::Font>("MainFont").Get());
-	mTextFailed.setCharacterSize(20);
-	mTextFailed.setPosition(180.0f, 40.0f);
+	mAntoineSprite.setTexture(en::ResourceManager::GetInstance().Get<en::Texture>("antoine").Get());
+	mAntoineSprite.setPosition({ 360.0f * 0.5f, 229.0f });
+	mAntoineInitialRect = mAntoineSprite.getTextureRect();
 
-	mTextCards.setFont(en::ResourceManager::GetInstance().Get<en::Font>("MainFont").Get());
-	mTextCards.setCharacterSize(20);
-	mTextCards.setPosition(10.0f, 150.0f);
-	mTextCards.setFillColor(sf::Color::Black);
-
-	mTextFirefighter.setFont(en::ResourceManager::GetInstance().Get<en::Font>("MainFont").Get());
-	mTextFirefighter.setCharacterSize(15);
-	mTextFirefighter.setPosition(10.0f, 300.0f); 
-	mTextFirefighter.setString("Pompier : A");
-	mTextVolunteer.setFont(en::ResourceManager::GetInstance().Get<en::Font>("MainFont").Get());
-	mTextVolunteer.setCharacterSize(15);
-	mTextVolunteer.setPosition(10.0f, 325.0f);
-	mTextVolunteer.setString("Bénévole : Z");
-	mTextPolice.setFont(en::ResourceManager::GetInstance().Get<en::Font>("MainFont").Get());
-	mTextPolice.setCharacterSize(15);
-	mTextPolice.setPosition(10.0f, 350.0f);
-	mTextPolice.setString("Police : E");
-	mTextSecurity.setFont(en::ResourceManager::GetInstance().Get<en::Font>("MainFont").Get());
-	mTextSecurity.setCharacterSize(15);
-	mTextSecurity.setPosition(10.0f, 375.0f);
-	mTextSecurity.setString("Sécurité : R");
-	mTextSafety.setFont(en::ResourceManager::GetInstance().Get<en::Font>("MainFont").Get());
-	mTextSafety.setCharacterSize(15);
-	mTextSafety.setPosition(10.0f, 400.0f);
-	mTextSafety.setString("Secouriste : T");
-	mTextAssistant.setFont(en::ResourceManager::GetInstance().Get<en::Font>("MainFont").Get());
-	mTextAssistant.setCharacterSize(15);
-	mTextAssistant.setPosition(10.0f, 425.0f);
-	mTextAssistant.setString("Prévention : Y");
-	mTextNothing.setFont(en::ResourceManager::GetInstance().Get<en::Font>("MainFont").Get());
-	mTextNothing.setCharacterSize(15);
-	mTextNothing.setPosition(10.0f, 450.0f);
-	mTextNothing.setString("Rien : U");
-
-	GameData::InitGame(4);
-	UpdateTexts();
+	mFirefighterSprite.setTexture(en::ResourceManager::GetInstance().Get<en::Texture>("button_firefighter").Get());
+	mFirefighterSprite.setPosition({ 195.0f, 276.0f });
+	mVolunteerSprite.setTexture(en::ResourceManager::GetInstance().Get<en::Texture>("button_volunteer").Get());
+	mVolunteerSprite.setPosition({ 71.0f, 460.0f });
+	mPoliceSprite.setTexture(en::ResourceManager::GetInstance().Get<en::Texture>("button_police").Get());
+	mPoliceSprite.setPosition({ 34.0f, 276.0f });
+	mSecuritySprite.setTexture(en::ResourceManager::GetInstance().Get<en::Texture>("button_security").Get());
+	mSecuritySprite.setPosition({ 57.0f, 368.0f });
+	mSafetySprite.setTexture(en::ResourceManager::GetInstance().Get<en::Texture>("button_safety").Get());
+	mSafetySprite.setPosition({ 195.0f, 368.0f });
+	mAssistantSprite.setTexture(en::ResourceManager::GetInstance().Get<en::Texture>("button_assistant").Get());
+	mAssistantSprite.setPosition({ 195.0f, 460.0f });
+	mNothingSprite.setTexture(en::ResourceManager::GetInstance().Get<en::Texture>("button_nothing").Get());
+	mNothingSprite.setPosition({ 95.0f, 551.0f });
 }
 
 bool GameState::handleEvent(const sf::Event& event)
 {
 	ENLIVE_PROFILE_FUNCTION();
 
-	if (event.type == sf::Event::KeyPressed)
+	const en::Vector2f mPos = getApplication().GetWindow().getCursorPositionView(GameSingleton::mView);
+	//printf("%f %f\n", mPos.x, mPos.y);
+
+	if (GameData::sCurrentPlayer == mPlayerIndex && mPlaying)
 	{
-		if (event.key.code == sf::Keyboard::A && GameData::sCanPlay[static_cast<en::U32>(ReactionData::Type::Firefighter)])
+		if (GameData::sCanPlay[static_cast<en::U32>(ReactionData::Type::Firefighter)] > 0 &&
+			((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::A) || (event.type == sf::Event::MouseButtonPressed && mFirefighterSprite.getGlobalBounds().contains(en::toSF(mPos)))))
 		{
 			React(ReactionData::Type::Firefighter);
 		}
-		if (event.key.code == sf::Keyboard::Z && GameData::sCanPlay[static_cast<en::U32>(ReactionData::Type::Volunteer)])
+		if (GameData::sCanPlay[static_cast<en::U32>(ReactionData::Type::Volunteer)] > 0 &&
+			((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Z) || (event.type == sf::Event::MouseButtonPressed && mVolunteerSprite.getGlobalBounds().contains(en::toSF(mPos)))))
 		{
 			React(ReactionData::Type::Volunteer);
 		}
-		if (event.key.code == sf::Keyboard::E && GameData::sCanPlay[static_cast<en::U32>(ReactionData::Type::Police)])
+		if (GameData::sCanPlay[static_cast<en::U32>(ReactionData::Type::Police)] > 0 &&
+			((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::E) || (event.type == sf::Event::MouseButtonPressed && mPoliceSprite.getGlobalBounds().contains(en::toSF(mPos)))))
 		{
 			React(ReactionData::Type::Police);
 		}
-		if (event.key.code == sf::Keyboard::R && GameData::sCanPlay[static_cast<en::U32>(ReactionData::Type::Security)])
+		if (GameData::sCanPlay[static_cast<en::U32>(ReactionData::Type::Security)] > 0 &&
+			((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::R) || (event.type == sf::Event::MouseButtonPressed && mSecuritySprite.getGlobalBounds().contains(en::toSF(mPos)))))
 		{
 			React(ReactionData::Type::Security);
 		}
-		if (event.key.code == sf::Keyboard::T && GameData::sCanPlay[static_cast<en::U32>(ReactionData::Type::Safety)])
+		if (GameData::sCanPlay[static_cast<en::U32>(ReactionData::Type::Safety)] > 0 &&
+			((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::T) || (event.type == sf::Event::MouseButtonPressed && mSafetySprite.getGlobalBounds().contains(en::toSF(mPos)))))
 		{
 			React(ReactionData::Type::Safety);
 		}
-		if (event.key.code == sf::Keyboard::Y && GameData::sCanPlay[static_cast<en::U32>(ReactionData::Type::Assistant)])
+		if (GameData::sCanPlay[static_cast<en::U32>(ReactionData::Type::Assistant)] > 0 &&
+			((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Y) || (event.type == sf::Event::MouseButtonPressed && mAssistantSprite.getGlobalBounds().contains(en::toSF(mPos)))))
 		{
 			React(ReactionData::Type::Assistant);
 		}
-		if (event.key.code == sf::Keyboard::U && GameData::sCanPlay[static_cast<en::U32>(ReactionData::Type::Nothing)])
+		if ((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::U) || (event.type == sf::Event::MouseButtonPressed && mNothingSprite.getGlobalBounds().contains(en::toSF(mPos))))
 		{
 			React(ReactionData::Type::Nothing);
 		}
@@ -110,12 +119,126 @@ bool GameState::update(en::Time dt)
 {
 	ENLIVE_PROFILE_FUNCTION();
 
-	GameData::sAccumulatedTime += dt;
-	if (GameData::sAccumulatedTime >= GameData::sReactionTime)
+	if (mOnline)
 	{
-		React(ReactionData::Type::Nothing);
+		if (mSocket.IsRunning())
+		{
+			sf::Packet packet;
+			while (mSocket.PollPacket(packet))
+			{
+				en::U8 packetIDRaw;
+				packet >> packetIDRaw;
+
+				const ServerPacketID packetID = static_cast<ServerPacketID>(packetIDRaw);
+				switch (packetID)
+				{
+				case ServerPacketID::Ping:
+				{
+					sf::Packet pongPacket;
+					pongPacket << static_cast<en::U8>(ClientPacketID::Pong);
+					mSocket.SendPacket(pongPacket);
+				} break;
+				case ServerPacketID::Pong:
+				{
+				} break;
+				case ServerPacketID::ConnectionAccepted:
+				{
+					en::F32 timePerReactionSeconds;
+					packet >> mPlayerIndex >> timePerReactionSeconds;
+					GameData::sReactionTime = en::seconds(timePerReactionSeconds);
+					LogInfo(en::LogChannel::All, 5, "ConnectionAccepted : Player %d", mPlayerIndex + 1);
+				} break;
+				case ServerPacketID::ConnectionRejected:
+				{
+					LogInfo(en::LogChannel::All, 5, "ConnectionRejected%s", "");
+					mSocket.Stop();
+				} break;
+				case ServerPacketID::ClientJoined:
+				{
+					en::U32 playerIndex;
+					packet >> playerIndex;
+					LogInfo(en::LogChannel::All, 5, "Player %d joined", playerIndex);
+				} break;
+				case ServerPacketID::ClientLeft:
+				{
+					en::U32 playerIndex;
+					packet >> playerIndex;
+					LogInfo(en::LogChannel::All, 5, "Player %d left", playerIndex);
+				} break;
+				case ServerPacketID::Stopping:
+				{
+					LogInfo(en::LogChannel::All, 5, "ServerStopping%s", "");
+					mSocket.Stop();
+				} break;
+				case ServerPacketID::GameInfo:
+				{
+					en::U8 tmp;
+					packet >> tmp; GameData::sNumberOfPlayers = static_cast<en::U32>(tmp);
+					packet >> tmp; GameData::sCurrentTurn = static_cast<en::U32>(tmp);
+					packet >> tmp; GameData::sCurrentPlayer = static_cast<en::U32>(tmp);
+					packet >> tmp; GameData::sFailed = static_cast<en::U32>(tmp);
+					packet >> mCardWhoString;
+					packet >> mCardWhatString;
+					packet >> mCardWhereString;
+					packet >> GameData::sCanPlay[static_cast<en::U32>(ReactionData::Type::Firefighter)];
+					packet >> GameData::sCanPlay[static_cast<en::U32>(ReactionData::Type::Volunteer)];
+					packet >> GameData::sCanPlay[static_cast<en::U32>(ReactionData::Type::Police)];
+					packet >> GameData::sCanPlay[static_cast<en::U32>(ReactionData::Type::Security)];
+					packet >> GameData::sCanPlay[static_cast<en::U32>(ReactionData::Type::Safety)];
+					packet >> GameData::sCanPlay[static_cast<en::U32>(ReactionData::Type::Assistant)];
+					GameData::sAccumulatedTime = en::Time::Zero;
+					GameData::sCanPlay[static_cast<en::U32>(ReactionData::Type::Nothing)] = 1;
+					UpdateTexts();
+				} break;
+
+				default:
+				{
+					LogWarning(en::LogChannel::All, 6, "Unknown ServerPacketID %d received", packetIDRaw);
+				} break;
+				}
+			}
+
+			GameData::sAccumulatedTime += dt;
+			if (GameData::sAccumulatedTime >= GameData::sReactionTime && GameData::sCurrentPlayer == mPlayerIndex)
+			{
+				React(ReactionData::Type::Nothing);
+			}
+		}
+		else
+		{
+			if (!mSocket.Start(sf::IpAddress::LocalHost, 3458))
+			{
+				clearStates();
+			}
+			sf::Packet packet;
+			packet << static_cast<en::U8>(ClientPacketID::Join);
+			mSocket.SendPacket(packet);
+			GameData::InitGame(4);
+			UpdateTexts();
+		}
 	}
-	mTextAccumulatedTime.setString(std::to_string(GameData::sReactionTime.asSeconds() - GameData::sAccumulatedTime.asSeconds()));
+	else
+	{
+		if (!mPlaying)
+		{
+			GameData::InitGame(4);
+			mPlayerIndex = 0;
+			mPlaying = true;
+			UpdateTexts();
+			GameData::sAccumulatedTime = en::Time::Zero;
+		}
+		else
+		{
+			if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+			{
+				GameData::sAccumulatedTime += dt;
+				if (GameData::sAccumulatedTime >= GameData::sReactionTime && GameData::sCurrentPlayer == mPlayerIndex)
+				{
+					React(ReactionData::Type::Nothing);
+				}
+			}
+		}
+	}
 
 	return false;
 }
@@ -125,54 +248,116 @@ void GameState::render(sf::RenderTarget& target)
 	ENLIVE_PROFILE_FUNCTION();
 
 	target.setView(GameSingleton::mView.getHandle());
-
-	target.draw(mBackground);
-	target.draw(mTextCards);
-	target.draw(mScreen);
-	target.draw(mTextCurrentTurn);
-	target.draw(mTextCurrentPlayer);
-	target.draw(mTextAccumulatedTime);
-	target.draw(mTextFailed);
-
-	target.draw(mTextFirefighter);
-	target.draw(mTextVolunteer);
-	target.draw(mTextPolice);
-	target.draw(mTextSecurity);
-	target.draw(mTextSafety);
-	target.draw(mTextAssistant);
-	target.draw(mTextNothing);
-}
-
-void GameState::React(ReactionData::Type reaction)
-{
-	if (!GameData::React(reaction))
+	
+	static bool whiteBgInit = false;
+	static sf::RectangleShape whiteBg;
+	if (!whiteBgInit)
 	{
-		GameData::InitGame(4);
+		whiteBg.setSize({ 360,640 });
+		whiteBg.setFillColor(sf::Color::White);
 	}
-	UpdateTexts();
+
+	target.draw(whiteBg);
+
+	if (mPlaying)
+	{
+		// Clock
+		en::F32 percent;
+		if (GameData::sReactionTime > en::Time::Zero)
+		{
+			percent = GameData::sAccumulatedTime.asSeconds() / GameData::sReactionTime.asSeconds();
+		}
+		else
+		{
+			percent = GameData::sAccumulatedTime.asSeconds() / 10.0f;
+		}
+		if (percent > 1.0f)
+		{
+			percent = 1.0f;
+		}
+		percent = 1.0f - percent;
+		sf::IntRect clockRect = mClockInitialRect;
+		clockRect.width = (int)((en::F32)mClockInitialRect.width * percent);
+		mClockSprite.setTextureRect(clockRect);
+		target.draw(mClockSprite);
+	}
+	target.draw(mTextCardWho);
+	target.draw(mTextCardWhat);
+	target.draw(mTextCardWhere);
+	target.draw(mAntoineSprite);
+	target.draw(mTextCurrentTurn);
+	target.draw(mTextTime);
+
+	target.draw(mScreen);
+	target.draw(mBackground);
+
+	if (mPlaying)
+	{
+		if (GameData::sCurrentPlayer == mPlayerIndex)
+		{
+			if (GameData::sCanPlay[static_cast<en::U32>(ReactionData::Type::Firefighter)] > 0)
+				target.draw(mFirefighterSprite);
+			if (GameData::sCanPlay[static_cast<en::U32>(ReactionData::Type::Volunteer)] > 0)
+				target.draw(mVolunteerSprite);
+			if (GameData::sCanPlay[static_cast<en::U32>(ReactionData::Type::Police)] > 0)
+				target.draw(mPoliceSprite);
+			if (GameData::sCanPlay[static_cast<en::U32>(ReactionData::Type::Security)] > 0)
+				target.draw(mSecuritySprite);
+			if (GameData::sCanPlay[static_cast<en::U32>(ReactionData::Type::Safety)] > 0)
+				target.draw(mSafetySprite);
+			if (GameData::sCanPlay[static_cast<en::U32>(ReactionData::Type::Assistant)] > 0)
+				target.draw(mAssistantSprite);
+			target.draw(mNothingSprite);
+		}
+	}
 }
 
 void GameState::UpdateTexts()
 {
 	mTextCurrentTurn.setString("Tour " + std::to_string(GameData::sCurrentTurn));
-	mTextCurrentPlayer.setString("Joueur " + std::to_string(GameData::sCurrentPlayer + 1));
-	mTextFailed.setString("Failed : " + std::to_string(GameData::sFailed));
-#ifdef ENLIVE_DEBUG
-	mTextCards.setString(GameData::sCards[GameData::sCardWhoID].text + " (" + std::to_string(GameData::sCards[GameData::sCardWhoID].bonus) + ")\n"
-		+ GameData::sCards[GameData::sCardWhatID].text + " (" + std::to_string(GameData::sCards[GameData::sCardWhatID].bonus) + ")\n"
-		+ GameData::sCards[GameData::sCardWhereID].text + " (" + std::to_string(GameData::sCards[GameData::sCardWhereID].bonus) + ")");
-#else
-	mTextCards.setString(GameData::sCards[GameData::sCardWhoID].text + "\n"
-		+ GameData::sCards[GameData::sCardWhatID].text + "\n"
-		+ GameData::sCards[GameData::sCardWhereID].text);
-#endif // ENLIVE_DEBUG
 
-	static sf::Color Grey(128, 128, 128);
-	mTextFirefighter.setFillColor(GameData::sCanPlay[static_cast<en::U32>(ReactionData::Type::Firefighter)] ? sf::Color::White : Grey);
-	mTextVolunteer.setFillColor(GameData::sCanPlay[static_cast<en::U32>(ReactionData::Type::Volunteer)] ? sf::Color::White : Grey);
-	mTextPolice.setFillColor(GameData::sCanPlay[static_cast<en::U32>(ReactionData::Type::Police)] ? sf::Color::White : Grey);
-	mTextSecurity.setFillColor(GameData::sCanPlay[static_cast<en::U32>(ReactionData::Type::Security)] ? sf::Color::White : Grey);
-	mTextSafety.setFillColor(GameData::sCanPlay[static_cast<en::U32>(ReactionData::Type::Safety)] ? sf::Color::White : Grey);
-	mTextAssistant.setFillColor(GameData::sCanPlay[static_cast<en::U32>(ReactionData::Type::Assistant)] ? sf::Color::White : Grey);
-	mTextNothing.setFillColor(GameData::sCanPlay[static_cast<en::U32>(ReactionData::Type::Nothing)] ? sf::Color::White : Grey);
+	en::DateTime date(2020, 05, 10, 22, 0, 0);
+	date += en::minutes(30 * (GameData::sCurrentTurn - 1));
+	std::string timeString = std::to_string(date.getHour()) + "h";
+	if (date.getMinute() > 0)
+	{
+		timeString += std::to_string(date.getMinute());
+	}
+	mTextTime.setString(timeString);
+
+	en::F32 percent = 1.0f - (GameData::sFailedMax - GameData::sFailed) * 0.2f; 
+	sf::IntRect antoineRect = mAntoineInitialRect;
+	antoineRect.width = (int)((en::F32)mAntoineInitialRect.width * percent);
+	mAntoineSprite.setTextureRect(antoineRect);
+	mAntoineSprite.setOrigin(mAntoineSprite.getGlobalBounds().width * 0.5f, 0.0f);
+
+	mCardWhoString = GameData::sCards[GameData::sCardWhoID].text;
+	mCardWhatString = GameData::sCards[GameData::sCardWhatID].text;
+	mCardWhereString = GameData::sCards[GameData::sCardWhereID].text;
+	mTextCardWho.setString(mCardWhoString);
+	mTextCardWho.setOrigin(mTextCardWho.getGlobalBounds().width * 0.5f, 0.0f);
+	mTextCardWhat.setString(mCardWhatString);
+	mTextCardWhat.setOrigin(mTextCardWhat.getGlobalBounds().width * 0.5f, 0.0f);
+	mTextCardWhere.setString(mCardWhereString);
+	mTextCardWhere.setOrigin(mTextCardWhere.getGlobalBounds().width * 0.5f, 0.0f);
+}
+
+void GameState::React(ReactionData::Type reaction)
+{
+	if (mOnline)
+	{
+		if (mSocket.IsRunning() && mPlayerIndex == GameData::sCurrentPlayer)
+		{
+			sf::Packet packet;
+			packet << static_cast<en::U8>(ClientPacketID::Reaction);
+			packet << static_cast<en::U32>(reaction);
+			mSocket.SendPacket(packet);
+		}
+	}
+	else
+	{
+		GameData::React(reaction);
+		mPlayerIndex = GameData::sCurrentPlayer;
+		UpdateTexts();
+	}
 }

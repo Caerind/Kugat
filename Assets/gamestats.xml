@@ -3,7 +3,7 @@
 GameStats
 	reactionTime : In seconds
 	failedMax : Failed possible
-	failedThreshold : (dice+bonus) > failedThreshold ==> Failed 
+	failedThreshold : (dice+bonus) > failedThreshold ==> Failed
 	delayCard : Nb turn indisponible for a card
 	delayReaction : Nb turn indisponible for a reaction
 -->
@@ -13,20 +13,20 @@ GameStats
 		type : 0=Who, 1=What, 2=Where
 		bonus : Nb, positive or negative
 		nb : Number of cards of of that type
-		tag : 0=None, 1=Solo, 2=Duo, 4=Group, 8=Bénévole, ... (2^n nb) and then add those you want 
+		tag : 0=None, 1=Solo, 2=Duo, 4=Group, 8=Bénévole, ... (2^n nb) and then add those you want
 		InnerText : Text
 	-->
 	<Card type="0" bonus="-1" nb="0" tag="9">
-		Un bénévole
+		Un benevole
 	</Card>
 	<Card type="0" bonus="-1" nb="0" tag="9">
-		Une bénévole
+		Une benevole
 	</Card>
 	<Card type="0" bonus="-1" nb="1" tag="1">
-		Le propriétaire du lieu
+		Le proprietaire du lieu
 	</Card>
 	<Card type="0" bonus="-1" nb="1" tag="1">
-		La propriétaire du lieu
+		La proprietaire du lieu
 	</Card>
 	<Card type="0" bonus="0" nb="4" tag="1">
 		Un mec
@@ -38,7 +38,7 @@ GameStats
 		Un duo mixte
 	</Card>
 	<Card type="0" bonus="0" nb="7" tag="2">
-		Un duo féminin
+		Un duo feminin
 	</Card>
 	<Card type="0" bonus="0" nb="7" tag="2">
 		Un duo masculin
@@ -52,34 +52,44 @@ GameStats
 	<Card type="0" bonus="0" nb="5" tag="4">
 		Un groupe de meufs
 	</Card>
-	<Card type="1" bonus="0" nb="1" tag="0">
+
+	<!--
+	Card
+		type : 0=Who, 1=What, 2=Where
+		bonus : Nb, positive or negative
+		nb : Number of cards of of that type
+		tag : 0=None, 1=Solo, 2=Duo, 4=Group, 8=Bénévole, ... (2^n nb) and then add those you want
+		InnerText : Text
+	-->
+
+	<Card type="1" bonus="-1" nb="1" tag="0">
 		danse
 	</Card>
 	<Card type="1" bonus="0" nb="1" tag="0">
 		s'embrasse
 	</Card>
-	<Card type="1" bonus="0" nb="1" tag="0">
+	<Card type="1" bonus="1" nb="1" tag="0">
 		urine
 	</Card>
-	<Card type="1" bonus="0" nb="1" tag="0">
+	<Card type="1" bonus="1" nb="1" tag="0">
 		dort
 	</Card>
-	<Card type="1" bonus="0" nb="1" tag="0">
+	<Card type="1" bonus="1" nb="1" tag="0">
 		tombe
 	</Card>
 	<Card type="1" bonus="0" nb="1" tag="0">
 		fouille dans un sac
 	</Card>
-	<Card type="1" bonus="0" nb="1" tag="0">
+	<Card type="1" bonus="1" nb="1" tag="0">
 		pleure
 	</Card>
-	<Card type="1" bonus="0" nb="1" tag="0">
-		a trouvé un trousseau de clés
+	<Card type="1" bonus="-2" nb="1" tag="0">
+		a trouve un trousseau de cles
 	</Card>
 	<Card type="1" bonus="0" nb="1" tag="0">
 		fume
 	</Card>
-	<Card type="1" bonus="0" nb="1" tag="0">
+	<Card type="1" bonus="1" nb="1" tag="0">
 		vomit
 	</Card>
 	<Card type="1" bonus="0" nb="1" tag="0">
@@ -88,52 +98,81 @@ GameStats
 	<Card type="1" bonus="0" nb="1" tag="0">
 		fume
 	</Card>
-	<Card type="1" bonus="0" nb="1" tag="0">
-		a trouvé ce qui ressemble à de la drogue
+	<Card type="1" bonus="1" nb="1" tag="0">
+		a trouve ce qui ressemble a de la drogue
 	</Card>
-	<Card type="1" bonus="0" nb="1" tag="0">
+	<Card type="1" bonus="-1" nb="1" tag="0">
 		se prend en photo
 	</Card>
 	<Card type="1" bonus="0" nb="1" tag="0">
 		boit
 	</Card>
-	<Card type="1" bonus="0" nb="1" tag="0">
+	<Card type="1" bonus="2" nb="1" tag="10">
 		fornique
 	</Card>
-	<Card type="1" bonus="0" nb="1" tag="0">
+	<Card type="1" bonus="2" nb="1" tag="9">
 		se masturbe
 	</Card>
-	<Card type="1" bonus="0" nb="1" tag="0">
+	<Card type="1" bonus="2" nb="1" tag="5">
 		se dispute
+	</Card>
+	<Card type="1" bonus="2" nb="1" tag="1">
+		lance une bouteille
 	</Card>
 	<Card type="1" bonus="0" nb="1" tag="0">
 		prend des cachets
 	</Card>
-	<Card type="2" bonus="0" nb="1" tag="0">
-		Where 1
+
+	<!--
+	Card
+		type : 0=Who, 1=What, 2=Where
+		bonus : Nb, positive or negative
+		nb : Number of cards of of that type
+		tag : 0=None, 1=Solo, 2=Duo, 4=Group, 8=Bénévole, ... (2^n nb) and then add those you want
+		InnerText : Text
+	-->
+
+	<Card type="2" bonus="-2" nb="1" tag="0">
+		sur la piste de danse.
 	</Card>
-	<Card type="2" bonus="0" nb="1" tag="0">
-		Where 2
+	<Card type="2" bonus="-1" nb="1" tag="0">
+		au bar.
 	</Card>
-	<Card type="2" bonus="0" nb="1" tag="0">
-		Where 3
+	<Card type="2" bonus="1" nb="1" tag="0">
+		aux toilettes.
 	</Card>
-	<Card type="2" bonus="0" nb="1" tag="0">
-		Where 4
+	<Card type="2" bonus="-1" nb="1" tag="0">
+		a cote du foodtruck.
 	</Card>
-	<Card type="2" bonus="0" nb="1" tag="0">
-		dans ton cul.
+	<Card type="2" bonus="-2" nb="1" tag="0">
+		a l'entree du lieu.
 	</Card>
+	<Card type="2" bonus="-2" nb="1" tag="0">
+		au vestiaire.
+	</Card>
+	<Card type="2" bonus="1" nb="1" tag="0">
+		sur le parking.
+	</Card>
+	<Card type="2" bonus="-1" nb="1" tag="0">
+		à l'exterieur.
+	</Card>
+	<Card type="2" bonus="-1" nb="1" tag="0">
+		dans la court interieure.
+	</Card>
+	<Card type="2" bonus="2" nb="1" tag="0">
+		dans un espace reserve au staff.
+	</Card>
+
 	<!--
 	Reaction
 		type : 0=Firefighter, 1=Volunteer, 2=Police, 3=Security, 4=Safety, 5=Assistant, 6=Nothing
 		bonus : Bonus or malus
 	-->
-	<Reaction type="0" bonus="0" nb="1" />
-	<Reaction type="1" bonus="0" nb="1" />
-	<Reaction type="2" bonus="0" nb="1" />
-	<Reaction type="3" bonus="0" nb="1" />
-	<Reaction type="4" bonus="0" nb="1" />
-	<Reaction type="5" bonus="0" nb="1" />
+	<Reaction type="0" bonus="-6" nb="1" />
+	<Reaction type="1" bonus="-1" nb="1" />
+	<Reaction type="2" bonus="-6" nb="1" />
+	<Reaction type="3" bonus="-2" nb="1" />
+	<Reaction type="4" bonus="-4" nb="1" />
+	<Reaction type="5" bonus="-1" nb="1" />
 	<Reaction type="6" bonus="0" nb="1" />
 </GameStats>

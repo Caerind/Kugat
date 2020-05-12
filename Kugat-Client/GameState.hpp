@@ -8,6 +8,7 @@
 #include <SFML/Graphics/Sprite.hpp>
 
 #include "GameData.hpp"
+#include "ClientSocket.hpp"
 
 class GameState : public en::State
 {
@@ -21,24 +22,35 @@ public:
 	void render(sf::RenderTarget& target);
 
 private:
-	void React(ReactionData::Type reaction);
 	void UpdateTexts();
 
+	void React(ReactionData::Type reaction);
+
 private:
+	bool mOnline;
+	bool mPlaying;
+	ClientSocket mSocket;
+	en::U32 mPlayerIndex;
 	sf::Sprite mBackground;
 	sf::Sprite mScreen;
-
+	sf::Sprite mClockSprite;
+	sf::IntRect mClockInitialRect;
+	std::string mCardWhoString;
+	std::string mCardWhatString;
+	std::string mCardWhereString;
 	sf::Text mTextCurrentTurn;
-	sf::Text mTextCurrentPlayer;
-	sf::Text mTextAccumulatedTime;
-	sf::Text mTextFailed;
-	sf::Text mTextCards;
+	sf::Text mTextTime;
+	sf::Text mTextCardWho;
+	sf::Text mTextCardWhat;
+	sf::Text mTextCardWhere;
+	sf::Sprite mAntoineSprite;
+	sf::IntRect mAntoineInitialRect;
 
-	sf::Text mTextFirefighter;
-	sf::Text mTextVolunteer;
-	sf::Text mTextPolice;
-	sf::Text mTextSecurity;
-	sf::Text mTextSafety;
-	sf::Text mTextAssistant;
-	sf::Text mTextNothing;
+	sf::Sprite mFirefighterSprite;
+	sf::Sprite mVolunteerSprite;
+	sf::Sprite mPoliceSprite;
+	sf::Sprite mSecuritySprite;
+	sf::Sprite mSafetySprite;
+	sf::Sprite mAssistantSprite;
+	sf::Sprite mNothingSprite;
 };

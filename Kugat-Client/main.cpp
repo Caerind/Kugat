@@ -16,7 +16,13 @@ int main(int argc, char** argv)
 	en::PathManager::GetInstance().SetScreenshotPath("Screenshots/");
 	en::Application::GetInstance().Initialize();
 
-	GameData::LoadFromFile(en::PathManager::GetInstance().GetAssetsPath() + "gamestats.xml");
+	if (!GameData::LoadFromFile(en::PathManager::GetInstance().GetAssetsPath() + "gamestats.xml"))
+	{
+		if (!GameData::LoadFromFile("gamestats.xml"))
+		{
+			return -1;
+		}
+	}
 
 	GameSingleton::mApplication = &en::Application::GetInstance();
 	GameSingleton::mApplication->GetWindow().create(sf::VideoMode(1024, 768), "Kugat", sf::Style::Titlebar | sf::Style::Close);

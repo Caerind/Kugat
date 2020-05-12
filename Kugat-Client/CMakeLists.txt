@@ -4,6 +4,10 @@ set(SRC_KUGAT_CLIENT
 	GameSingleton.hpp
 	GameState.cpp
 	GameState.hpp
+	Button.cpp
+	Button.hpp
+	Widget.cpp
+	Widget.hpp
 	main.cpp
 )
 source_group("" FILES ${SRC_KUGAT_CLIENT})

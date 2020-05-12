@@ -13,7 +13,7 @@ void ltrim(std::string& s)
 {
 	s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int ch)
 	{
-		return !std::isspace(ch);
+		return (ch >= 0 && ch < 255) ? !std::isspace(ch) : false; // TODO : false or true ?
 	}));
 }
 
@@ -21,7 +21,7 @@ void rtrim(std::string& s)
 {
 	s.erase(std::find_if(s.rbegin(), s.rend(), [](int ch)
 	{
-		return !std::isspace(ch);
+		return (ch >= 0 && ch < 255) ? !std::isspace(ch) : false; // TODO : false or true ?
 	}).base(), s.end());
 }
 

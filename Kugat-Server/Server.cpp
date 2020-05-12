@@ -115,9 +115,9 @@ void Server::HandleIncomingPackets()
 
 				LogInfo(en::LogChannel::All, 5, "%d players connected", mPlayers.size());
 
-				if (playerIndex == defaultMaxPlayers - 1)
+				if (mPlayers.size() == defaultMaxPlayers)
 				{
-					GameData::InitGame(playerIndex);
+					GameData::InitGame(mPlayers.size());
 					SendGameInfo();
 				}
 			}
@@ -142,15 +142,16 @@ void Server::HandleIncomingPackets()
 		case ClientPacketID::Reaction:
 		{
 			const en::U32 playerIndex = GetIndexFromEndpoint(endpoint);
-			if (playerIndex != en::U32_Max)
+			if (playerIndex != en::U32_Max && mPlayers.size() == defaultMaxPlayers)
 			{
 				if (playerIndex == GameData::sCurrentPlayer)
 				{
 					en::U32 reactionRaw;
 					receivedPacket >> reactionRaw;
 					ReactionData::Type reaction = static_cast<ReactionData::Type>(reactionRaw);
-					if (GameData::IsReactionAvailable(reaction))
+					if (GameData::IsReactionAvailable(reaction) > 0)
 					{
+						LogInfo(en::LogChannel::All, 5, "Player react:%d from %s:%d", reactionRaw, remoteAddress.toString().c_str(), remotePort);
 						GameData::React(reaction);
 						SendGameInfo();
 					}

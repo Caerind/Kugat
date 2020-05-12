@@ -1,9 +1,20 @@
 <?xml version="1.0"?>
 <Resources resourceCount="5" typeCount="9">
 	<Resource identifier="MainFont" filename="Fonts/Tahoma.ttf" type="0" />
-	<Resource identifier="cursor" filename="Textures/cursor.png" type="1" />
+	<Resource identifier="DS-DIGIB" filename="Fonts/DS-DIGIB.ttf" type="0" />
+	<Resource identifier="DS-DIGI" filename="Fonts/DS-DIGI.ttf" type="0" />
+	<Resource identifier="antoine" filename="Textures/antoine.png" type="1" />
 	<Resource identifier="background" filename="Textures/background.png" type="1" />
 	<Resource identifier="background_screen" filename="Textures/background_screen.png" type="1" />
+	<Resource identifier="button_assistant" filename="Textures/button_assistant.png" type="1" />
+	<Resource identifier="button_firefighter" filename="Textures/button_firefighter.png" type="1" />
+	<Resource identifier="button_nothing" filename="Textures/button_nothing.png" type="1" />
+	<Resource identifier="button_police" filename="Textures/button_police.png" type="1" />
+	<Resource identifier="button_safety" filename="Textures/button_safety.png" type="1" />
+	<Resource identifier="button_security" filename="Textures/button_security.png" type="1" />
+	<Resource identifier="button_volunteer" filename="Textures/button_volunteer.png" type="1" />
+	<Resource identifier="clock" filename="Textures/clock.png" type="1" />
+	<Resource identifier="cursor" filename="Textures/cursor.png" type="1" />
 	<Resource identifier="menu_soundtrack" filename="Musics/menu_soundtrack.ogg" type="6" />
 	<Resource identifier="type" filename="Sounds/type.wav" type="7" />
 </Resources>
